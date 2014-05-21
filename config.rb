@@ -6,3 +6,5 @@ line_comments = false
 preferred_syntax = :scss
 relative_assets = true    
 fonts_dir = ""   
+
+require 'json'

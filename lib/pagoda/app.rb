@@ -41,7 +41,7 @@ module Shwedagon
     # Create a new post from scratch. Return filename
     # This would not commit the file.
     def create_new_post(params)      
-      post_title = params[:post][:title]
+      post_title = params['post']['title']
       post_date  = (Time.now).strftime("%Y-%m-%d")
       content    = yaml_data(post_title).to_yaml + "---\n" + params[:post][:content]
       post_file  = (post_date + " " + post_title).to_url + '.md'
@@ -53,8 +53,8 @@ module Shwedagon
 
     # Merge existing yaml with post params
     def merge_config(yaml, params)
-      if params[:post].has_key? :yaml
-        params[:post][:yaml].each do |key, value|
+      if params['post'].has_key? 'yaml'
+        params['post']['yaml'].each do |key, value|
           if value == 'true'
             yaml[key] = true
           elsif value == 'false'
@@ -152,7 +152,7 @@ module Shwedagon
     end
 
     get '/new' do
-      @ptitle = params[:ptitle]
+      @ptitle = params['ptitle']
       mustache :new_post
     end
 

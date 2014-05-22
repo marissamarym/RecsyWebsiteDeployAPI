@@ -140,7 +140,7 @@ module Shwedagon
       @data_array = []
 
       post.data.each do |key, value|
-        @data_array << {:key => key, :value => value}
+        @data_array << {'key' => key, 'value' => value}
       end
 
       if post.data[:published] == false

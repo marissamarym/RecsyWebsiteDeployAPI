@@ -218,9 +218,9 @@ module Shwedagon
       end
     end
 
-    post 'test' do
+    post '/test' do
       jdata = JSON.parse(params[:data],:symbolize_names => true) 
-      
+
     end
 
 

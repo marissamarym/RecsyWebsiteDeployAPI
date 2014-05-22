@@ -41,7 +41,7 @@ module Shwedagon
     # Create a new post from scratch. Return filename
     # This would not commit the file.
     def create_new_post(params)      
-      post_title = params[:post][:title]
+      post_title = params['post']['title']
       post_date  = (Time.now).strftime("%Y-%m-%d")
       content    = yaml_data(post_title).to_yaml + "---\n" + params[:post][:content]
       post_file  = (post_date + " " + post_title).to_url + '.md'
@@ -218,10 +218,24 @@ module Shwedagon
       end
     end
 
-    get '/save-post-json/:method' do
+    get '/save-post-json/:method/:title/:content' do
         if params[:method] == 'put'
-          {:status => 'OK'}.to_json
+          post_title = params[:title]
+          post_date  = (Time.now).strftime("%Y-%m-%d")
+          content    = yaml_data(post_title).to_yaml + "---\n" + params[:content]
+          post_file  = (post_date + " " + post_title).to_url + '.md'
+          file       = File.join(jekyll_site.source, *%w[_posts], post_file)
+          File.open(file, 'w') { |file| file.write(content)}
+          post_file
+        elsif params[:method] == 'post'
+          post_file   = params[:name]
+          post        = jekyll_post(post_file)
+          yaml_config = merge_config(post.data, params)
+          write_post_contents(params[:content], yaml_config, post_file)
+
+          post_file
         end
+
     end
 
 

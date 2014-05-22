@@ -41,7 +41,7 @@ module Shwedagon
     # Create a new post from scratch. Return filename
     # This would not commit the file.
     def create_new_post(params)      
-      post_title = params['post']['title']
+      post_title = params[:post][:title]
       post_date  = (Time.now).strftime("%Y-%m-%d")
       content    = yaml_data(post_title).to_yaml + "---\n" + params[:post][:content]
       post_file  = (post_date + " " + post_title).to_url + '.md'
@@ -216,6 +216,11 @@ module Shwedagon
       else
         redirect @base_url + '/edit/' + filename
       end
+    end
+
+    post 'test' do
+      jdata = JSON.parse(params[:data],:symbolize_names => true) 
+      
     end
 
 

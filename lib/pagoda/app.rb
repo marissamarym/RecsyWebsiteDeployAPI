@@ -218,9 +218,10 @@ module Shwedagon
       end
     end
 
-    post '/test' do
-      jdata = JSON.parse(params[:data],:symbolize_names => true) 
-
+    get '/save-post-json/:method' do
+        if params[:method] == 'put'
+          {:status => 'OK'}.to_json
+        end
     end
 
 

@@ -195,8 +195,8 @@ module Shwedagon
     end
     post '/save-post.json' do
       dataJson = JSON.parse(request.body.read, symbolize_names: true)
-      #data[:method]
-      #data[:post][:content]
+      data[:method]
+      data[:post][:content]
       if dataJson[:method] == 'put'
         filename = create_new_post(dataJson)        
         log_message = "Created #{filename}"

@@ -133,7 +133,7 @@ module Shwedagon
       end
 
       post     = jekyll_post(post_file) 
-      @title   = post.data[:title]
+      @title   = post.data['title']
       @content = post.content
       @name    = post.name
 
@@ -143,7 +143,7 @@ module Shwedagon
         @data_array << {'key' => key, 'value' => value}
       end
 
-      if post.data[:published] == false
+      if post.data['published'] == false
         @draft = true
       end
 

@@ -41,7 +41,7 @@ module Shwedagon
     # Create a new post from scratch. Return filename
     # This would not commit the file.
     def create_new_post(params)      
-      post_title = params['post']['title']
+      post_title = params[:post][:title]
       post_date  = (Time.now).strftime("%Y-%m-%d")
       content    = yaml_data(post_title).to_yaml + "---\n" + params[:post][:content]
       post_file  = (post_date + " " + post_title).to_url + '.md'
@@ -53,8 +53,8 @@ module Shwedagon
 
     # Merge existing yaml with post params
     def merge_config(yaml, params)
-      if params['post'].has_key? 'yaml'
-        params['post']['yaml'].each do |key, value|
+      if params[:post].has_key? :yaml
+        params[:post][:yaml].each do |key, value|
           if value == 'true'
             yaml[key] = true
           elsif value == 'false'
@@ -133,17 +133,17 @@ module Shwedagon
       end
 
       post     = jekyll_post(post_file) 
-      @title   = post.data['title']
+      @title   = post.data[:title]
       @content = post.content
       @name    = post.name
 
       @data_array = []
 
       post.data.each do |key, value|
-        @data_array << {'key' => key, 'value' => value}
+        @data_array << {:key => key, :value => value}
       end
 
-      if post.data['published'] == false
+      if post.data[:published] == false
         @draft = true
       end
 
@@ -152,7 +152,7 @@ module Shwedagon
     end
 
     get '/new' do
-      @ptitle = params['ptitle']
+      @ptitle = params[:ptitle]
       mustache :new_post
     end
 
@@ -193,6 +193,7 @@ module Shwedagon
         redirect @base_url + '/edit/' + filename
       end
     end
+
     post '/save-post.json' do
       dataJson = JSON.parse(request.body.read, symbolize_names: true)
       data[:method]
@@ -218,8 +219,8 @@ module Shwedagon
       end
     end
 
-    get '/save-post-json/:method/:title/:content' do
-        if params[:method] == 'put'
+    get '/save-post.json' do
+
           post_title = params[:title]
           post_date  = (Time.now).strftime("%Y-%m-%d")
           content    = yaml_data(post_title).to_yaml + "---\n" + params[:content]
@@ -227,14 +228,10 @@ module Shwedagon
           file       = File.join(jekyll_site.source, *%w[_posts], post_file)
           File.open(file, 'w') { |file| file.write(content)}
           post_file
-        elsif params[:method] == 'post'
-          post_file   = params[:name]
-          post        = jekyll_post(post_file)
-          yaml_config = merge_config(post.data, params)
-          write_post_contents(params[:content], yaml_config, post_file)
 
-          post_file
-        end
+    end
+
+    get '/save-post-json/:method/:title/:content/:yaml[:title]' do
 
     end
 

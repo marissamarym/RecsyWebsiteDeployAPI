@@ -43,6 +43,7 @@ module Shwedagon
     def create_new_post(params)      
       post_title = params['post']['title']
       post_date  = (Time.now).strftime("%Y-%m-%d")
+
       content    = yaml_data(post_title).to_yaml + "---\n" + params[:post][:content]
       post_file  = (post_date + " " + post_title).to_url + '.md'
       file       = File.join(jekyll_site.source, *%w[_posts], post_file)
@@ -94,7 +95,7 @@ module Shwedagon
 
       mustache :home
     end
-    # Index of drafts and published posts
+        # Index of drafts and published posts
     get '/home.json' do
       content_type :json
       @drafts    = posts_template_data(jekyll_site.read_drafts)
@@ -114,15 +115,6 @@ module Shwedagon
       
       redirect @base_url
     end
-    get '/delete/*.json' do
-      post_file = params[:splat].first
-      full_path = post_path(post_file)
-
-      repo.remove([full_path])
-      data = repo.commit_index "Deleted #{post_file}"
-      push_to_origin(repo)
-    end
-
 
     # Edit any post
     get '/edit/*' do
@@ -193,48 +185,6 @@ module Shwedagon
         redirect @base_url + '/edit/' + filename
       end
     end
-
-    post '/save-post.json' do
-      dataJson = JSON.parse(request.body.read, symbolize_names: true)
-      data[:method]
-      data[:post][:content]
-      if dataJson[:method] == 'put'
-        filename = create_new_post(dataJson)        
-        log_message = "Created #{filename}"
-      else
-        filename = update_post(dataJson)
-        log_message = "Changed #{filename}"
-      end
-
-      # Stage the file for commit
-      repo.add File.join(jekyll_site.source, *%w[_posts], filename)
-
-      data = repo.commit_index log_message
-      push_to_origin(repo)
-
-      if params[:ajax]
-        {:status => 'OK'}.to_json
-      else
-        redirect @base_url + '/edit/' + filename
-      end
-    end
-
-    get '/save-post.json' do
-
-          post_title = params[:title]
-          post_date  = (Time.now).strftime("%Y-%m-%d")
-          content    = yaml_data(post_title).to_yaml + "---\n" + params[:content]
-          post_file  = (post_date + " " + post_title).to_url + '.md'
-          file       = File.join(jekyll_site.source, *%w[_posts], post_file)
-          File.open(file, 'w') { |file| file.write(content)}
-          post_file
-
-    end
-
-    get '/save-post-json/:method/:title/:content/:yaml[:title]' do
-
-    end
-
 
   end
 end

@@ -168,7 +168,7 @@ module Shwedagon
       if params[:method] == 'put'
         filename = create_new_post(params)        
         log_message = "Created #{filename}"
-      else
+      elsif params[:method] == 'post'
         filename = update_post(params)
         log_message = "Changed #{filename}"
       end
